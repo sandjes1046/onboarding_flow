@@ -23,8 +23,7 @@ If attempting to enter the /wizard page before entering email and password the u
 
 * About Me (text box limit of 500 characters)
 
-Birthday (date box)
+* Birthday (date box)
 
-Address Fields (zip code only accepts numbers and has max length of 5)
-
-(street, city, state, zip)
+* Address Fields (zip code only accepts numbers and has max length of 5)
+  (street, city, state, zip)
