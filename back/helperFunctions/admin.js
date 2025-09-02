@@ -43,7 +43,7 @@ const updateOnboardingEntries = async(fields) => {
 
         return true
     } catch (error) {
-        res.status(500).json({ error: 'An error has occured',error_message:error.message });
+        console.log('An error has occured: ',error.message)
     }
 }
 
