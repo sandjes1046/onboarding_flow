@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "strict": false,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"] // Exclude the output directory
+
+}

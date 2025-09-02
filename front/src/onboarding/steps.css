@@ -1,0 +1,28 @@
+.custom-stepper {
+  width: 100%;
+  max-width: 1000px;
+  margin-top: 30px;
+  opacity: 0;
+  animation: fadeInStepper 1s ease forwards;
+}
+
+@keyframes fadeInStepper {
+  to {
+    opacity: 1;
+  }
+}
+
+.custom-stepper .MuiStepLabel-label {
+  font-weight: bold;
+  font-size: 30px;
+}
+
+.custom-stepper .MuiStepLabel-root.Mui-active .MuiStepLabel-label,
+.custom-stepper .MuiStepLabel-root.Mui-completed .MuiStepLabel-label {
+  color: #ff69b4;
+}
+
+.custom-stepper .MuiStepIcon-root.Mui-active,
+.custom-stepper .MuiStepIcon-root.Mui-completed {
+  color: #ff69b4;
+}
