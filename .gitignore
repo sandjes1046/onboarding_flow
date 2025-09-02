@@ -1,0 +1,8 @@
+/front/.env.development
+/front/.env.production
+/front/node_modules
+/front/build
+
+/back/.env.development
+/back/.env.production
+/back/node_modules
