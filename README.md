@@ -5,23 +5,23 @@ If attempting to enter the /wizard page before entering email and password the u
 
 ## Pages available:
 
-/ 
+* / 
 
-/wizard
+* /wizard
 
-/admin
+* /admin
 
-/data (shows data from database)
+* /data (shows data from database)
 
-/login (placeholder page for when the user finishes onboarding)
+* /login (placeholder page for when the user finishes onboarding)
 
 ## Onboarding Fields:
 
-    Email
+* Email
 
-Password
+* Password
 
-About Me (text box limit of 500 characters)
+* About Me (text box limit of 500 characters)
 
 Birthday (date box)
 
