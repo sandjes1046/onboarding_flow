@@ -1,52 +1,41 @@
 import { Card, CardContent, TextField, Button } from '@mui/material';
-import {useState, useEffect, FormEvent} from 'react';
+import {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import './steps.css'
-import client from '../client'
-import {OnboardingFields} from '../types'
-import {StepProps, UserData} from '../interfaces'
+import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment'
+import {getStep,saveUser} from '../controllers/userController'
 
-function Step3({email, step, backButton}: StepProps) {
+function Step3({email, step, backButton}) {
     const navigate = useNavigate();
 
+    const dispatch = useDispatch()
+    const user = useSelector(state => state.user)
+
     const [appearField, setAppearField] = useState(false);
-    const [fields, setFields] = useState<OnboardingFields>({}); //{about_me:{title:'About Me',step:2},birthday:{title:'Birthday',step:3},address:{title:'Address',step:2}}
-    const [fieldAnswers, setFieldAnswers] = useState<UserData>({});
+    const [fieldAnswers, setFieldAnswers] = useState({});
 
-    useEffect(() => {
-        setTimeout(() => setAppearField(true), 100);  
+    useEffect(() => {        
+        setTimeout(() => setAppearField(true), 100);   
 
-        async function fetchData() {
-            //call route to get what fields go here
-            //get user data to prefill fields if they exist fieldAnswers
-            try {
-                const result = await client.get('/user/get-step', { params: { email,step:step } });
-                setFields(result.data.fields)//{about_me:{title:"About Me"},address:{title:"Address"},birthday:{title:"Birthday"}} }
-                setFieldAnswers(result.data.answers)//{about_me:"",street:"",city:"",state:"",zip:"",birthday:""}
-            } catch (error) {
-                alert("Refresh and try again")
-                console.error("Step3 useEffect Error: ", error);
-            }
+        dispatch(getStep({email:user.email,step:user.step,setFieldAnswers}))
 
-        }      
-        fetchData(); 
-    }, []);
-
-    const handleSubmit = async(e: FormEvent) => {
-        e.preventDefault();
-        //Use fieldAnswers here
-        //route to save answers and update user step in background and update here too
-        //console.log(fieldAnswers);
-        try {
-            await client.put('/user/save-step', {email, step:step, answers:fieldAnswers,complete:true});
-            navigate('/login', { replace: true } )
-        } catch (error) {
-            alert("Refresh and try again")
-            console.error("Step3 handleSubmit Error: ", error);
+        if(user.status === 'completed')
+        {
+            setFieldAnswers({...user})
         }
       
-    };;
+    }, []);
+
+
+    const handleSubmit = async(e) => {
+            e.preventDefault();
+    
+            dispatch(saveUser({email,step:user.step+1,answers:fieldAnswers,complete:true, navigateLogin:navigate('/login', { replace: true } )}))
+    
+          
+          
+        };
     
     
     return(
@@ -61,7 +50,7 @@ function Step3({email, step, backButton}: StepProps) {
                 <CardContent>
                     <form  className='flex flex-col gap-16' onSubmit={handleSubmit}>
                     {
-                    Object.keys(fields).map((key) => {
+                    Object.keys(user.fields).map((key) => {
 
                         if(key === "birthday")
                         {
@@ -72,7 +61,7 @@ function Step3({email, step, backButton}: StepProps) {
                                         onChange={(e) => {
                                             setFieldAnswers({...fieldAnswers, [key]: e.target.value})
                                         }}
-                                        label={fields[key].title}
+                                        label={user.fields[key].title}
                                         type="date"
                                         slotProps={{
                                             inputLabel: { shrink: true}
@@ -124,7 +113,7 @@ function Step3({email, step, backButton}: StepProps) {
                                             setFieldAnswers({...fieldAnswers, [key]: e.target.value})
                                         }}
                                         placeholder='Tell us about yourself...'
-                                        label={fields[key].title}
+                                        label={user.fields[key].title}
                                         multiline
                                         rows={5}
                                         fullWidth

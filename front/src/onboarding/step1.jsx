@@ -1,4 +1,4 @@
-import {Button, Card, IconButton, Menu, MenuItem, TextField, Toolbar, Alert} from '@mui/material';
+import {Button, Card, IconButton, Menu, MenuItem, TextField, Toolbar} from '@mui/material';
 import React, {useState, useEffect, FormEvent} from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
@@ -7,12 +7,16 @@ import {useNavigate} from 'react-router-dom';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import client from '../client'
-
-//email and password step
+import {useSelector, useDispatch} from 'react-redux'
+import {getUser} from '../controllers/userController'
+import {clearUser} from '../models/userSlice'
 function Step1() {
 
-  const [anchorEl, setAnchorEl] = useState<React.MouseEvent<HTMLButtonElement>['currentTarget'] | null>(null);
+  const dispatch = useDispatch()
+  const user = useSelector(state => state.user)
+  const navigate = useNavigate();
+
+  const [anchorEl, setAnchorEl] = useState(null);
   const [triangleIn, setTriangleIn] = useState(false);
   const [appearField, setAppearField] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
@@ -21,9 +25,8 @@ function Step1() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState(''); 
 
-  const navigate = useNavigate();
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleMenuClose = () => {
@@ -34,6 +37,7 @@ function Step1() {
   useEffect(() => {
     setEmail('');
     setPassword('');
+    dispatch(clearUser())
 
     setTimeout(() => setTriangleIn(true), 100);
     setTimeout(() => setAppearField(true), 120);
@@ -41,34 +45,12 @@ function Step1() {
 
   }, []);
 
-  const handleStep2 = () => {
-    // Logic for navigating to wizard
-    navigate('/wizard', { replace: false, state: { email: email, password: password } } )
-  };
 
-  const handleSubmit = async(e: FormEvent) => {
+
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    // Use email and password here
-    //console.log(email,"\n", password);
-
     if(email && password){
-      try {
-        const result = await client.get('/user/get-user', {params:{email,password}});
-        if(result.data.complete === true)
-        {
-          //user already completed register
-          navigate('/login', { replace: false } )
-        }
-        else
-        {
-          //user register not complete
-          handleStep2();
-        }
-      } catch (error) {
-        alert("Refresh and try again")
-        console.error("handleSubmit Error: ", error);
-      }
-
+      dispatch(getUser({email,password,navigateLogin:navigate('/login', { replace: false } ),navigateWizard:navigate('/wizard', { replace: false } )}))
     }
     
   };

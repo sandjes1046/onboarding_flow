@@ -1,34 +1,15 @@
-import {useState,useEffect} from 'react'
+import {useEffect} from 'react'
 import {Table,TableHead,TableBody,TableRow,TableCell, Typography, TableContainer, Paper} from '@mui/material'
-import client from '../client'
-import { database_admin,database_users } from '../types'
-
+import { useSelector,useDispatch } from 'react-redux'
+import {getData} from '../controllers/dataController'
 function DataTable () {
 
-    type database= {
-        users: database_users[];
-        admin: database_admin[];
-
-    }
-
-    const [data,setData] = useState<database>({users:[],admin:[]})
+    const dispatch = useDispatch()
+    const data = useSelector(state => state.data)
 
     useEffect(() => {
-        async function fetchData(){
-                try {
-                
-            
-                    //get DB data
-                    
-
-                    const result = await client.get('data/get-data')//{users:[],admin:[]} 
-                    setData(result.data)
-                } catch (error) {
-                    console.log('useEffect error:',error)
-                    alert('Refresh and try again')
-                }
-        }
-        fetchData()
+      
+        dispatch(getData())
 
     },[])
 

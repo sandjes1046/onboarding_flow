@@ -1,20 +1,22 @@
 import {useState, useEffect} from 'react';
-import { Card, Grid, Typography, Box, Button, Toolbar, CardContent, Select, Menu, MenuItem,Alert, Slide } from '@mui/material';
+import { Card, Typography, Box, Button, Toolbar, CardContent, Select, Menu, MenuItem,Alert, Slide } from '@mui/material';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import {useNavigate} from 'react-router-dom';
 import '../App.css'
-import client from '../client'
 import MenuIcon from '@mui/icons-material/Menu';
-import {database_admin, OnboardingFields} from '../types'
-
+import { useSelector, useDispatch } from 'react-redux';
+import {getAdmin,saveAdmin} from '../controllers/adminController'
 function EditOnboarding() {
 
-    const [anchorEl, setAnchorEl] = useState<React.MouseEvent<HTMLButtonElement>['currentTarget'] | null>(null);
+    const dispatch = useDispatch()
+    const admin = useSelector(state => state.admin)
+
+    const [anchorEl, setAnchorEl] = useState(null);
     const [triangleIn, setTriangleIn] = useState(false);
     const [appearField, setAppearField] = useState(false);
     const [showTitle, setShowTitle] = useState(false);
 
-    const [fields, setFields] = useState<OnboardingFields>({}); //{about_me:{title:'About Me',step:2},birthday:{title:'Birthday',step:3},address:{title:'Address',step:2}}
+    const [fields, setFields] = useState({}); //{about_me:{title:'About Me',step:2},birthday:{title:'Birthday',step:3},address:{title:'Address',step:2}}
 
     const [showErrorAlert, setShowErrorAlert] = useState(false);
     const [showsuccessAlert, setShowSuccessAlert] = useState(false);
@@ -76,7 +78,7 @@ function EditOnboarding() {
 
     const navigate = useNavigate();
 
-    const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -89,20 +91,18 @@ function EditOnboarding() {
         setTimeout(() => setAppearField(true), 120);
         setTimeout(() => setShowTitle(true), 300);
 
-        async function fetchData(){
-            //call route to get what fields go here
-            //get user data to prefill fields if they exist fieldAnswers
-            try {
-                const result = await client.get('/admin/get-onboarding');
-                setFields(result.data.fields)//{about_me:{title:'About Me',step:2},birthday:{title:'Birthday',step:3},address:{title:'Address',step:2}}
-            } catch (error) {
-                alert("Refresh and try again")
-                console.error("EditOnboarding useEffect Error: ", error);
-            }
+        if(admin.status === 'idle')
+        {
+            dispatch(getAdmin())
         }
-        fetchData();
+        
+        if(admin.status === 'succeeded')
+        {
+            setFields(admin.fields)
+        }
+        
 
-    }, []);
+    }, [admin.status]);
 
     const handleSave = async() => {
         try {
@@ -124,7 +124,7 @@ function EditOnboarding() {
             else
             {
                 //update fields in backend
-                await client.put('/admin/save-onboarding', {fields});
+                dispatch(saveAdmin({fields}))
                 summonSuccessAlert();
                 return;
             }
