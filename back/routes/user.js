@@ -1,6 +1,6 @@
 const { Router } = require ('express');
 const router = Router()
-const { getUser, getStep, saveStep } = require('../helperFunctions/user')
+const { getUser, getStep, saveStep } = require('../controllers/user')
 
 router.get('/get-user', getUser)
 

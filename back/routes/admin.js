@@ -1,6 +1,6 @@
 const { Router } = require ('express');
 const router = Router()
-const { getOnboarding,saveOnboarding } = require('../helperFunctions/admin')
+const { getOnboarding,saveOnboarding } = require('../controllers/admin')
 
 router.get('/get-onboarding', getOnboarding)
 
